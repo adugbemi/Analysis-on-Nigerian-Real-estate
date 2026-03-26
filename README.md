@@ -2,7 +2,7 @@
 
 An exploratory data analysis of 24,000+ Nigerian property listings, designed to answer key business questions for investors, developers, banks, and fintechs operating in the Nigerian property market.
 
----
+
 
 ## Key Findings
 
@@ -11,7 +11,6 @@ An exploratory data analysis of 24,000+ Nigerian property listings, designed to 
 -  **Detached Bungalows** :offer the best value at ₦10M per bedroom, nearly 5x cheaper than Detached Duplexes
 -  **Median property price**: is ₦75M affordable entry starts at ₦38M
 
----
 
 ## Business Questions Answered
 
@@ -28,7 +27,7 @@ An exploratory data analysis of 24,000+ Nigerian property listings, designed to 
 | Developer | What type of property should I build to maximize sales? |
 | Developer | Which locations have the most demand? |
 
----
+
 
 ## Tools & Libraries
 
@@ -38,7 +37,7 @@ An exploratory data analysis of 24,000+ Nigerian property listings, designed to 
 - Seaborn
 - NumPy
 
----
+
 
 ## How to Run
 
@@ -46,7 +45,7 @@ An exploratory data analysis of 24,000+ Nigerian property listings, designed to 
 2. Install dependencies : pip install -r requirements.txt
 3. Open the notebook :jupyter notebook "EDA on Nigerian real estate.ipynb"
 
----
+
 
 ## Next Steps
 
@@ -54,7 +53,7 @@ An exploratory data analysis of 24,000+ Nigerian property listings, designed to 
 - Property segmentation using KMeans clustering
 - Interactive Streamlit price estimator
 
----
+
 
 ## Dataset
 
