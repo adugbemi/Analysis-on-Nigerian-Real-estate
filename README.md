@@ -55,12 +55,12 @@ Post-cleaning, the price range is ₦6M–₦1.6B with a readable distribution c
 
 ## Key Findings
 
-### 📍 Market Structure
+###  Market Structure
 - **The market is a tale of two cities.** Lagos and Abuja together account for **84% of all listings**. The Nigerian property market is not geographically distributed — it is heavily concentrated in two states.
 - Lagos dominates in **volume** (61% of listings), while Abuja commands the highest **average prices** (₦183M vs Lagos at ₦160M).
 - Most other states have fewer than 500 listings, which limits data-driven conclusions about those markets.
 
-### 💰 Pricing
+###  Pricing
 
 | Metric | Value |
 |---|---|
