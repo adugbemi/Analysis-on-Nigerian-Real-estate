@@ -127,5 +127,5 @@ jupyter notebook "EDA on Nigerian real estate.ipynb"
 
 ## Author
 
-**Gbemi Adugbemi** — Data Analyst & ML Engineer  
+**Gbemi Adugbemi** — Junior Data Analyst & ML Engineer  
 [LinkedIn](https://www.linkedin.com/in/gbemisola-aduloju-9b0380297/) · [GitHub](https://github.com/adugbemi)
