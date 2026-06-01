@@ -1,131 +1,144 @@
-# Nigerian Real Estate Market Analysis
+# Nigerian House Price Predictor
 
-> An end-to-end exploratory data analysis of **24,326 Nigerian property listings**  answering real market questions for investors, developers, banks, and fintechs.
+A machine learning web application that predicts residential property prices in **Lagos** and **Abuja**, Nigeria. Built with scikit-learn and deployed via Streamlit.
 
-[View Notebook on nbviewer](Jupyter Notebook Viewer )  🔗 [LinkedIn](https://www.linkedin.com/in/gbemisola-aduloju-9b0380297/)
-
----
-
-## Overview
-
-Nigeria's property market is large, fragmented, and poorly understood at the data level. This project cuts through the noise by systematically analyzing listing data scraped from Nigerian real estate platforms to surface patterns in pricing, demand, and value across states and property types.
-
-The analysis is structured around 10 concrete business questions not just charts covering investment decisions, market structure, risk signals, and developer strategy.
+**[Live App → Nigerian House Price Predictor](https://analysis-on-nigerian-real-estate-9nyazsbj9dfzzzrqrg5vm8.streamlit.app/)**
 
 ---
 
-## Business Questions
+## Project Overview
 
-| Stakeholder | Question |
-|---|---|
-| **Investor** | Where should I invest in Nigerian real estate? |
-| **Investor** | Which property type gives the best value for money? |
-| **Investor** | What is the realistic cost of entry? |
-| **Market Analyst** | Which states have the most active listing markets? |
-| **Market Analyst** | Is the market geographically concentrated or spread across Nigeria? |
-| **Market Analyst** | What separates the affordable segment from the luxury segment? |
-| **Risk / Compliance** | Are there outlier prices suggesting fraud or data quality issues? |
-| **Risk / Compliance** | How much price variation exists within each state? |
-| **Developer** | What property type should I build to maximize market absorption? |
-| **Developer** | Which locations have the highest demonstrated demand? |
+Nigerian real estate pricing differs sharply by location, property type, and size, making it difficult for buyers, investors, and developers to gauge fair market value. This project addresses that gap by training a machine learning model on 24,000 property listings scraped from Nigerian real estate platforms, enabling instant price estimates from a simple web interface.
 
 ---
 
 ## Dataset
 
-- **Source:** [Nigerian House Price Dataset](https://www.kaggle.com/datasets/michaelanietie/nigerian-house-price-dataset) — scraped from Nigerian real estate platforms
-- **Raw size:** 24,326 listings · 8 features
-- **Features:** `bedrooms`, `bathrooms`, `toilets`, `parking_space`, `title`, `town`, `state`, `price`
-- **After cleaning:** 13,631 records (see Data Cleaning below)
+| Detail | Value |
+|---|---|
+| **Source** | [Kaggle; Nigerian real estate listings] (https://www.kaggle.com/datasets/michaelanietie/nigerian-house-price-dataset?resource=download) |
+| **Raw records** | 24,326 |
+| **After cleaning** | 13,631 |
+| **Scope** | Lagos & Abuja only |
+| **Target variable** | Property price (in Naira) |
+
+**Key cleaning steps:**
+- Removed 10,438 duplicate entries (42.9% of raw data caused by repeated scraping)
+- Applied quantile filter (1st–99th percentile) to remove extreme price outliers
+- Dropped `town` due to high cardinality (189 unique values); used `state` as geographic proxy
+- Dropped `toilets` due to multicollinearity with `bathrooms` (r = 0.79)
+- Dropped `parking_space` due to low correlation with price (r = 0.05)
 
 ---
 
-## Data Cleaning
+## Feature Engineering
 
-The raw dataset required significant cleaning before analysis:
+Five interaction features were engineered from the raw room count columns:
 
-| Issue | Detail | Action |
-|---|---|---|
-| **Duplicate listings** | 10,438 duplicates — 42.9% of the dataset, likely from repeated scraping cycles | Removed all duplicates → 13,888 unique records |
-| **Price outliers** | Raw prices ranged from ₦90K to ₦1.8 trillion — extreme values are almost certainly data entry errors or scraping artifacts | Applied 1st–99th percentile filter → 257 records removed → 13,631 final records |
-
-Post-cleaning, the price range is ₦6M–₦1.6B with a readable distribution centred around ₦75M.
+| Feature | Description |
+|---|---|
+| `total_no_of_rooms` | bedrooms + bathrooms |
+| `bath_per_bed` | bathrooms / (bedrooms + 1) |
+| `room_per_bed` | total rooms / (bedrooms + 1) |
+| `bed_x_bath` | bedrooms × bathrooms |
+| `is_large` | Binary flag: total rooms ≥ 5 |
 
 ---
 
-## Key Findings
+##  Modelling
 
-###  Market Structure
-- **The market is a tale of two cities.** Lagos and Abuja together account for **84% of all listings**. The Nigerian property market is not geographically distributed — it is heavily concentrated in two states.
-- Lagos dominates in **volume** (61% of listings), while Abuja commands the highest **average prices** (₦183M vs Lagos at ₦160M).
-- Most other states have fewer than 500 listings, which limits data-driven conclusions about those markets.
+Two models were trained and compared:
 
-###  Pricing
+| Model | Notes |
+|---|---|
+| Linear Regression | Baseline; pipeline with `StandardScaler` |
+| **Random Forest** | Chosen model; 100 estimators |
+
+**Why Random Forest?** It handles non-linear relationships between features and price better than linear regression, and outperformed it on both training and test metrics.
+
+**Target transformation:** `np.log1p()` was applied to the price target to correct right skew before training. Predictions are inverse-transformed with `np.expm1()` before display.
+
+**Preprocessing pipeline:**
+- `TargetEncoder` → `town`
+- `OneHotEncoder` → `title`, `state`
+- `passthrough` → numerical features
+
+**Train/test split:** 80/20, `random_state=42`
+
+---
+
+## Model Performance
 
 | Metric | Value |
 |---|---|
-| Minimum (after cleaning) | ₦6M |
-| 25th Percentile — affordable entry | ₦38M |
-| Median | ₦75M |
-| 75th Percentile — luxury threshold | ₦155M |
-| Maximum (after cleaning) | ₦1.6B |
+| **R² Score** | *(0.5390)* |
+| **Test MAE** | *(78,899,826)* |
+| **RMSE** | *(164,722,650)* |
 
-- **Lagos and Abuja** have the widest price distributions; both premium and affordable listings coexist in these markets.
-- **Other states** are cheaper and more tightly clustered, indicating less market variability but also lower liquidity.
-
-### Location Demand
-- **Lekki is the heartbeat of Nigerian real estate**;3,500+ listings in the cleaned dataset, nearly **3× more** than second-place Ajah.
-- The top 5 demand locations are all in Lagos: Lekki, Ajah, Ikoyi, Ikeja, with Port Harcourt as the only non-Lagos entry in the top 5.
-- For developers and investors, **Lekki and Ajah represent the highest-demand locations in the country**.
-
-###  Property Type Supply
-- **Detached Duplexes dominate** with 6,335 listings, nearly 4× more than any other type. This also signals **potential market saturation**.
-- Developers seeking less competition may find better opportunities in Terraced Duplexes, Detached Bungalows, or Block of Flats each showing healthy demand (1,400–2,000 listings) without the same crowding.
-- **Detached Duplexes command the highest average prices** overall, making them a premium rather than a value choice.
-
-### Best Value Property
-- **Detached Bungalows offer the best value for money** at approximately **₦10M per bedroom**, nearly **5× cheaper per bedroom** than Detached Duplexes (₦48M per bedroom).
-- For budget-conscious buyers, bungalows deliver the most space per naira spent.
-
-### Risk Signals
-- Raw price data contained entries as low as ₦90K and as high as ₦1.8 trillion clear indicators of fraud, test listings, or scraping errors.
-- After the quantile filter, 257 records (2%) were removed as price outliers.
-- Price variation is highest in Lagos and Abuja, making due diligence on individual listings especially important in those markets.
-
-### Feature Relationships ( Modeling Implications)
-- **Bedrooms** is the strongest numeric predictor of price (correlation: **0.35**) but even this is only moderate, confirming that **location and property type are stronger price drivers than bedroom count alone**.
-- **Bathrooms and toilets** are highly correlated with each other (**0.79**),only one should enter predictive models to avoid multicollinearity.
-- **Parking space** has almost no relationship with price (**0.05**), likely droppable as a feature.
+> Full evaluation results are in [`notebooks/Modelling_of_Nigerian_Dataset.ipynb`](notebooks/Modelling_of_Nigerian_Dataset.ipynb)
 
 ---
 
-## Tools & Libraries
+## Key EDA Findings
 
-- Python 3
-- Pandas: data wrangling, deduplication, aggregation
-- NumPy: numerical operations
-- Matplotlib & Seaborn: visualization
+- **Abuja** has the highest average property prices making it the premium investment destination
+- **Lagos** has more listings and a wider price range, better suited for volume investors
+- **Detached Duplexes** dominate listings (6,335) but are also the most expensive per bedroom (~₦48M/bedroom)
+- **Detached Bungalows** offer the best value at ~₦10M per bedroom
+- Median market entry price: **₦75M** (25th percentile: ₦38M, 75th: ₦155M)
 
 ---
 
-## How to Run
+## App Features
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/adugbemi/Analysis-on-Nigerian-Real-estate.git
-cd Analysis-on-Nigerian-Real-estate
+The Streamlit app allows users to input:
+- State (Lagos or Abuja)
+- Town
+- Property type (Detached Duplex, Semi-Detached Duplex, Terraced Duplex, Detached Bungalow, Semi-Detached Bungalow, Terraced Bungalow, Block of Flats)
+- Number of bedrooms, bathrooms, and total rooms
 
-# 2. Install dependencies
-pip install pandas numpy matplotlib seaborn jupyter
+And outputs an **instant price estimate in Naira**.
 
-# 3. Launch the notebook
-jupyter notebook "EDA on Nigerian real estate.ipynb"
+---
+
+## Repository Structure
+
+```
+├── app.py                          # Streamlit app
+├── model_rf.pkl                    # Trained Random Forest model
+├── requirements.txt                # Dependencies
+├── README.md
+│
+├── notebooks/
+│   ├── EDA_on_Nigerian_real_estate.ipynb
+│   ├── Modelling_of_Nigerian_Dataset.ipynb
+│   └── Streamlit_Deployment.ipynb
+│
+└── data/
+    └── nigeria_houses_data.csv     # Raw dataset (not tracked in git if large)
 ```
 
 ---
 
+## Run Locally
+
+```bash
+git clone https://github.com/your-username/nigerian-house-price-predictor.git
+cd nigerian-house-price-predictor
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+---
+
+## Tech Stack
+
+`Python` · `pandas` · `scikit-learn` · `NumPy` · `Matplotlib` · `Seaborn` · `joblib` · `Streamlit`
+
+---
 
 ## Author
 
-**Gbemi Adugbemi** — Junior Data Analyst & ML Engineer  
-[LinkedIn](https://www.linkedin.com/in/gbemisola-aduloju-9b0380297/) · [GitHub](https://github.com/adugbemi)
+**Faith Aduloju**  
+[GitHub](https://github.com/adugbemi) 
+[LinkedIn](https://linkedin.com/in/gbemisola-aduloju)
