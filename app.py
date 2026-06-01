@@ -5,7 +5,7 @@ import numpy as np
 import joblib
 
 
-model = joblib.load('model_rf.pkl')
+model = joblib.load('../model_rf.pkl')
 
 # Your actual towns from the dataset
 town_list = sorted([
