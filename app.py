@@ -5,9 +5,8 @@ import numpy as np
 import joblib
 
 
-model = joblib.load('../model_rf.pkl')
-
-# Your actual towns from the dataset
+model = joblib.load('model/model_rf.pkl')
+# Towns from the dataset
 town_list = sorted([
     'Agbara-Igbesa', 'Agege', 'Ajah', 'Alimosho', 'Amuwo Odofin', 'Apapa', 'Apo', 'Asokoro District', 'Ayobo', 'Badagry', 'Bwari', 'Central Business District',      'Dakibiyu', 'Dakwo', 'Dape', 'Dei-Dei', 'Diplomatic Zones', 'Duboyi', 'Durumi', 'Dutse', 'Egbe', 'Ejigbo', 'Epe', 'Gaduwa', 'Galadimawa', 'Garki','Gbagada',     'Gudu', 'Guzape District', 'Gwagwalada', 'Gwarinpa', 'Ibeju', 'Ibeju Lekki', 'Idimu', 'Idu Industrial', 'Ifako-Ijaiye', 'Ijaiye', 'Ijede', 'Ijesha', 'Ikeja'     'Ikorodu', 'Ikotun', 'Ikoyi', 'Ilupeju', 'Imota', 'Ipaja', 'Isheri', 'Isheri North', 'Isolo', 'Jabi', 'Jahi', 'Kabusa', 'Kado', 'Kafe', 'Kagini', 'karmo'        'Karsana', 'Karshi', 'Karu', 'Katampe', 'Kaura', 'Ketu', 'Kosofe', 'Kubwa', 'Kuje', 'Kukwaba', 'Kurudu', 'Kyami', 'Lagos Island', 'Lekki', 
     'Life Camp','Lokogoma District', 'Lugbe District', 'Mabushi', 'Magodo', 'Maitama District', 'Mararaba', 'Maryland', 'Mbora (Nbora)', 'Mpape','Mushin',           'Nyanya','Ogudu','Ojo', 'Ojodu', 'Ojota', 'Oke-Odo', 'Orile', 'Orozo', 'Oshodi', 'Shomolu', 'Surulere', 'Utako', 'Victoria Island (VI)', 'Wumba', 'Wuse',        'Wuse 2','Wuye', 'Yaba'
